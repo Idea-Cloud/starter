@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+
+  python:
+    image: ${PYTHON_IMAGE}
+    container_name: ${STACK_NAME}.python
+    user: ${LOCAL_USER_UID}:${LOCAL_USER_GID}
+    command: /bin/bash -c "while [ 1 ]; do sleep 3600; done"
+    working_dir: ${DATA_PATH_PREFIX}/api
+    tty: true
+    ports:
+      - 5000:5000
+    volumes:
+      - ${PWD}:${DATA_PATH_PREFIX}
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: 'True'
+    networks:
+      - app
+
+  node:
+    image: ${NODE_IMAGE}
+    container_name: ${STACK_NAME}.node
+    user: ${LOCAL_USER_UID}:${LOCAL_USER_GID}
+    command: /bin/bash -c "while [ 1 ]; do sleep 3600; done"
+    working_dir: ${DATA_PATH_PREFIX}/ui
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ${PWD}:${DATA_PATH_PREFIX}:delegated
+      - ${PWD}/ui:${DATA_PATH_PREFIX}/ui:delegated
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    networks:
+      - app
+
+networks:
+  app:
